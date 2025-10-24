@@ -1,0 +1,14 @@
+{
+    "PLA": {
+        "youngs_modulus": 3500,
+        "tensile_strength": 60
+    },
+    "ABS": {
+        "youngs_modulus": 2100,
+        "tensile_strength": 40
+    },
+    "PETG": {
+        "youngs_modulus": 2200,
+        "tensile_strength": 50
+    }
+}
