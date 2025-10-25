@@ -1,0 +1,16 @@
+{
+  "defaults": {
+    "material": "PLA",
+    "infill_pattern": "HC",
+    "infill_density": 0.0,
+    "wall_count": 10,
+    "line_width": 0.001
+  },
+  "sections": [
+    {
+      "length": 10.0,
+      "width": 1.0,
+      "height": 1.0
+    }
+  ]
+}

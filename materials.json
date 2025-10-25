@@ -1,17 +1,17 @@
 {
     "PLA": {
-        "youngs_modulus": 3500,
-        "tensile_strength": 60,
-        "shear_modulus": 1200
+        "youngs_modulus": 2.6e9,
+        "tensile_strength": 4.5e7,
+        "shear_modulus": 9e8
     },
     "ABS": {
-        "youngs_modulus": 2100,
-        "tensile_strength": 40,
-        "shear_modulus": 800
+        "youngs_modulus": 3e9,
+        "tensile_strength": 4e7,
+        "shear_modulus": 1e9
     },
     "PETG": {
-        "youngs_modulus": 2200,
-        "tensile_strength": 50,
-        "shear_modulus": 850
+        "youngs_modulus": 2e9,
+        "tensile_strength": 5e7,
+        "shear_modulus": 7e8
     }
 }

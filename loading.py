@@ -1,11 +1,11 @@
-def moment_load(section):
+def moment_load(section,M):
     b = section.width
     h = section.height
     L = section.length
     t = section.wall_thickness
     E_shell = section.E_shell
     n = section.infill_density/100
-    applied_moment = section.M
+    applied_moment = M
 
     # Dimensions of the core
     b_core = b - 2 * t
@@ -32,7 +32,7 @@ def moment_load(section):
 
     return (theta, delta, sigma_top)
 
-def force_load(section):
+def force_load(section, F):
     # Extract parameters
     b = section.width
     h = section.height
@@ -40,7 +40,7 @@ def force_load(section):
     t = section.wall_thickness
     E_shell = section.E_shell
     n = section.infill_density/100
-    applied_force = section.F
+    applied_force = F
 
     # Dimensions of the core
     b_core = b - 2 * t
@@ -77,15 +77,15 @@ def force_load(section):
 
     return(delta, theta, sigma_top, tau_max)
 
-def torsion_load(section):
+def torsion_load(section, T):
     # Extract parameters
     b = section.width
     h = section.height
     L = section.length
-    t = section.shell_thickness
+    t = section.wall_thickness
     G_shell = section.G_shell
     n = section.infill_density/100
-    applied_torque = section.T
+    applied_torque = T
 
     # Dimensions of the core
     b_core = b - 2 * t
@@ -109,14 +109,14 @@ def torsion_load(section):
 
     return (theta, tau_max)
 
-def tensile_load(section):
+def tensile_load(section, TF):
     
 # Extract parameters
     b = section.width
     h = section.height
-    t = section.shell_thickness
+    t = section.wall_thickness
     n = section.infill_density/100
-    applied_tensile_force = section.TF
+    applied_tensile_force = TF
 
     # Dimensions of the core
     b_core = b - 2 * t

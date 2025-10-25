@@ -1,15 +1,29 @@
 class Beam:
     def __init__(self, material=None, infill_pattern=None, infill_density=None, wall_count=None, line_width=None):
-        self.material = material
-        self.infill_pattern = infill_pattern
-        self.infill_density = infill_density
-        self.wall_count = wall_count
-        self.line_width = line_width
+        self.default_material = material
+        self.default_infill_pattern = infill_pattern
+        self.default_infill_density = infill_density
+        self.default_wall_count = wall_count
+        self.default_line_width = line_width
         self.sections = []
     
-    def add_section(self, section):
+    def add_section(self, length, width, height, material=None, infill_pattern=None, infill_density=None, wall_count=None, line_width=None):
         # the first section added is the clamped end
+        from section import Section
+
+        # Use parameters if provided, otherwise fall back to beam defaults
+        section = Section(
+        length=length,
+        width=width,
+        height=height,
+        material=material if material is not None else self.default_material,
+        infill_pattern=infill_pattern if infill_pattern is not None else self.default_infill_pattern,
+        infill_density=infill_density if infill_density is not None else self.default_infill_density,
+        wall_count=wall_count if wall_count is not None else self.default_wall_count,
+        line_width=line_width if line_width is not None else self.default_line_width,
+        )
         self.sections.append(section)
+
     
     def input_load(self, M, F, T, TF):
         self.M = M
@@ -25,7 +39,7 @@ class Beam:
         T = self.T
         TF = self.TF
         analysis(M, F, T, TF, self.sections[-1])
-        cumulative_length = self.sections[-1].length
+        cumulative_length = [self.sections[-1].length]
         if len(self.sections) > 1:
             for i in range(len(self.sections) - 2, -1, -1):
                 M = M + F * self.sections[i + 1].length
@@ -54,7 +68,7 @@ class Beam:
         # compare and find the maximum stress in the beam
         self.max_stress = 0
         self.max_stress_section = -1
-        for i in range(self.sections):
+        for i in range(len(self.sections)):
             if self.sections[i].required_yield_stress > self.max_stress:
                 self.max_stress = self.sections[i].required_yield_stress
                 self.max_stress_section = i
