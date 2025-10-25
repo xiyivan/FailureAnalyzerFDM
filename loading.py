@@ -77,6 +77,34 @@ def force_load(section, F):
 
     return(delta, theta, sigma_top, tau_max)
 
+def compute_tortion_constant(b, h, t, G_shell, n, nx=1000, ny=1000):
+    import numpy as np
+    # Inner dimensions
+    bi = b - 2 * t
+    hi = h - 2 * t
+
+    # Create grid
+    x = np.linspace(-b/2, b/2, nx)
+    y = np.linspace(-h/2, h/2, ny)
+    dx = x[1] - x[0]
+    dy = y[1] - y[0]
+    X, Y = np.meshgrid(x, y)
+
+    # Masks for outer shell and core
+    mask_outer = (np.abs(X) <= b/2) & (np.abs(Y) <= h/2)
+    mask_core = (np.abs(X) <= bi/2) & (np.abs(Y) <= hi/2)
+
+    # Shear modulus distribution
+    shear_modulus = np.where(mask_core, n, 1)
+
+    # Integrate (x^2 + y^2) * G over the entire section
+    integrand = (X**2 + Y**2) * shear_modulus
+    J = np.sum(integrand) * dx * dy
+
+    return J
+
+
+
 def torsion_load(section, T):
     # Extract parameters
     b = section.width
@@ -92,20 +120,14 @@ def torsion_load(section, T):
     h_core = h - 2 * t
 
     # Polar moment of inertia approximation for rectangular section
-    J_outer = (b * h**3) * (16/3) / (1.8 * b + h)
-    J_inner = (b_core * h_core**3) * (16/3) / (1.8 * b_core + h_core)
-    J_shell = J_outer - J_inner
-
-    # Composite polar moment using transformed section method
-    J_core_transformed = n * J_inner
-    J_composite = J_shell + J_core_transformed
+    J = compute_tortion_constant(b, h, t, G_shell, n)
 
     # Torsional rotation (radians)
-    theta = applied_torque * L / (G_shell * J_composite)
+    theta = applied_torque * L / (G_shell * J)
 
     # Maximum shear stress at outer surface
     r = max(b, h) / 2
-    tau_max = applied_torque * r / J_composite # constant arround the shell
+    tau_max = applied_torque * r / J # constant arround the shell
 
     return (theta, tau_max)
 
@@ -176,7 +198,7 @@ def required_yield_stress_von_mises(tensile_stress, shear_stress):
     sigma_1 = tensile_stress / 2 + ((tensile_stress / 2)**2 + shear_stress**2)**0.5
     sigma_2 = tensile_stress / 2 - ((tensile_stress / 2)**2 + shear_stress**2)**0.5
 
-    sigma_max = ((sigma_1**2 - (sigma_1 - sigma_2)**2 + sigma_2**2)/2)**0.5
+    sigma_max = ((sigma_1**2 + (sigma_1 - sigma_2)**2 + sigma_2**2)/2)**0.5
 
     return sigma_max
 
@@ -205,7 +227,6 @@ def analysis(M, F, T, TF, section):
     # at the neutral axis
     neutral_axis_shear_stress = abs(tau_force) + abs(tau_torsion)
     neutral_axis_tensile_stress = axial_stress
-
     required_yield_stress = max(required_yield_stress_tresca(surface_tensile_stress, surface_shear_stress),
                                 required_yield_stress_von_mises(surface_tensile_stress, surface_shear_stress),
                                 required_yield_stress_tresca(neutral_axis_tensile_stress, neutral_axis_shear_stress),
