@@ -1,10 +1,11 @@
-def moment_load(section, applied_moment):
+def moment_load(section):
     b = section.width
     h = section.height
     L = section.length
     t = section.wall_thickness
     E_shell = section.E_shell
-    E_core = section.E_core
+    n = section.infill_density/100
+    applied_moment = section.M
 
     # Dimensions of the core
     b_core = b - 2 * t
@@ -16,7 +17,6 @@ def moment_load(section, applied_moment):
     I_shell = I_outer - I_inner
 
     # Composite moment of inertia using transformed section method
-    n = E_core / E_shell
     I_core_transformed = n * I_inner
     I_composite = I_shell + I_core_transformed
 
@@ -32,14 +32,15 @@ def moment_load(section, applied_moment):
 
     return (theta, delta, sigma_top)
 
-def force_load(section, applied_force):
+def force_load(section):
     # Extract parameters
     b = section.width
     h = section.height
     L = section.length
     t = section.wall_thickness
     E_shell = section.E_shell
-    E_core = section.E_core
+    n = section.infill_density/100
+    applied_force = section.F
 
     # Dimensions of the core
     b_core = b - 2 * t
@@ -51,7 +52,6 @@ def force_load(section, applied_force):
     I_shell = I_outer - I_inner
 
     # Composite moment of inertia using transformed section method
-    n = E_core / E_shell
     I_core_transformed = n * I_inner
     I_composite = I_shell + I_core_transformed
 
@@ -77,14 +77,15 @@ def force_load(section, applied_force):
 
     return(delta, theta, sigma_top, tau_max)
 
-def torsion_load(section, applied_torque):
+def torsion_load(section):
     # Extract parameters
     b = section.width
     h = section.height
     L = section.length
     t = section.shell_thickness
     G_shell = section.G_shell
-    G_core = section.G_core
+    n = section.infill_density/100
+    applied_torque = section.T
 
     # Dimensions of the core
     b_core = b - 2 * t
@@ -96,7 +97,6 @@ def torsion_load(section, applied_torque):
     J_shell = J_outer - J_inner
 
     # Composite polar moment using transformed section method
-    n = G_core / G_shell
     J_core_transformed = n * J_inner
     J_composite = J_shell + J_core_transformed
 
@@ -109,14 +109,14 @@ def torsion_load(section, applied_torque):
 
     return (theta, tau_max)
 
-def tensile_load(section, applied_tensile_force):
+def tensile_load(section):
     
 # Extract parameters
     b = section.width
     h = section.height
     t = section.shell_thickness
-    E_shell = section.E_shell
-    E_core = section.E_core
+    n = section.infill_density/100
+    applied_tensile_force = section.TF
 
     # Dimensions of the core
     b_core = b - 2 * t
@@ -127,7 +127,6 @@ def tensile_load(section, applied_tensile_force):
     A_core = b_core * h_core
 
     # Transformed core area
-    n = E_core / E_shell
     A_core_transformed = n * A_core
 
     # Effective area
@@ -180,7 +179,6 @@ def required_yield_stress_von_mises(tensile_stress, shear_stress):
     sigma_max = ((sigma_1**2 - (sigma_1 - sigma_2)**2 + sigma_2**2)/2)**0.5
 
     return sigma_max
-
 
 def analysis(M, F, T, TF, section):
     if M is not None:
