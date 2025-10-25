@@ -5,11 +5,13 @@ A Python-based tool for analyzing the effects of mechanical loading on 3D-printe
 ---
 
 ## Table of Contents
-- [About](#about)
-- Features
-- How to Use
-- License
-- Limitations
+- [Failure Analyzer for FDM](#failure-analyzer-for-fdm)
+  - [Table of Contents](#table-of-contents)
+  - [About](#about)
+  - [Features](#features)
+  - [How to Use](#how-to-use)
+  - [License](#license)
+  - [Limitations](#limitations)
 
 ---
 
